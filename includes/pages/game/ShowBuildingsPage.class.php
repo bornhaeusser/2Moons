@@ -87,6 +87,10 @@ class ShowBuildingsPage extends AbstractGamePage
 			return $this->CancelBuildingFromQueue();
         }
 
+        if(empty($CurrentQueue[$QueueID - 2][3])) {
+            throw new Exception("Issue #138 triggered: \n\n".var_dump($ActualCount, $QueueID, $PLANET['b_building_id'], $CurrentQueue));
+        }
+
 		$Element		= $CurrentQueue[$QueueID - 2][0];
 		$BuildEndTime	= $CurrentQueue[$QueueID - 2][3];
 		unset($CurrentQueue[$QueueID - 1]);
