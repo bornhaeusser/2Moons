@@ -115,6 +115,16 @@ define('ENABLE_MULTIALERT'			, true);
 // UTF-8 support for names (required for non-english chars!)
 define('UTF8_SUPPORT'				, true);
 
+// CRON_MODE
+// 1 - Execute crons via AJAX
+// 2 - Execute every 5 minutes cron.php via a web cron service
+// 3 - Execute every 5 minutes cron.php via a system cron service (e.g. crond)
+define('CRON_MODE'	    			, 1);
+
+// CRON_KEY
+// Define a key for CRON_MODE 2 as protection agaist players (register cron.php?key=CRON_KEY)
+define('CRON_KEY'	    			, '');
+
 // Define, how its more hard to spy all inforation
 /*
 	if [Spy tech level of sender] > [Spy tech level of target]

@@ -21,34 +21,50 @@ set_include_path(ROOT_PATH);
 
 require 'includes/common.php';
 
-$session	= Session::load();
+if (CRON_MODE === 1) {
+    $session	= Session::load();
 
-// Output transparent gif
-HTTP::sendHeader('Cache-Control', 'no-cache');
-HTTP::sendHeader('Content-Type', 'image/gif');
-HTTP::sendHeader('Expires', '0');
+    // Output transparent gif
+    HTTP::sendHeader('Cache-Control', 'no-cache');
+    HTTP::sendHeader('Content-Type', 'image/gif');
+    HTTP::sendHeader('Expires', '0');
 
 
-echo("\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B");
+    echo("\x47\x49\x46\x38\x39\x61\x01\x00\x01\x00\x80\x00\x00\x00\x00\x00\x00\x00\x00\x21\xF9\x04\x01\x00\x00\x00\x00\x2C\x00\x00\x00\x00\x01\x00\x01\x00\x00\x02\x02\x44\x01\x00\x3B");
 
-if(!$session->isValidSession())
-{
-	exit;
-}
+    if(!$session->isValidSession())
+    {
+        exit;
+    }
 
-$cronjobID	= HTTP::_GP('cronjobID', 0);
+    $cronjobID	= HTTP::_GP('cronjobID', 0);
 
-if(empty($cronjobID))
-{
-	exit;
+    if(empty($cronjobID))
+    {
+        exit;
+    }
+} elseif (CRON_MODE === 2) {
+    if(empty(CRON_KEY) || CRON_KEY !== HTTP::_GP('key')) {
+        exit;
+    }
+} elseif (CRON_MODE === 3) {
+    if(PHP_SAPI !== 'cli') {
+        exit;
+    }
 }
 
 require 'includes/classes/Cronjob.class.php';
 
 $cronjobsTodo	= Cronjob::getNeedTodoExecutedJobs();
-if(!in_array($cronjobID, $cronjobsTodo))
-{
-	exit;
-}
+if (CRON_MODE === 1) {
+    if(!in_array($cronjobID, $cronjobsTodo))
+    {
+        exit;
+    }
 
-Cronjob::execute($cronjobID);
+    Cronjob::execute($cronjobID);
+} else {
+    foreach($cronjobsTodo as $cronjobID) {
+        Cronjob::execute($cronjobID);
+    }
+}

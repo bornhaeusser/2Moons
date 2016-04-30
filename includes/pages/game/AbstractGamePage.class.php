@@ -83,6 +83,8 @@ abstract class AbstractGamePage
 
 	protected function getCronjobsTodo()
 	{
+	    if (CRON_MODE !== 1) return;
+
 		require_once 'includes/classes/Cronjob.class.php';
 
 		$this->assign(array(
