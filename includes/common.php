@@ -36,6 +36,11 @@ if (file_exists($composerAutoloader)) {
     require $composerAutoloader;
 }
 
+function isCommandLineInterface()
+{
+    return (php_sapi_name() === 'cli');
+}
+
 // Magic Quotes work around.
 // http://www.php.net/manual/de/security.magicquotes.disabling.php#91585
 if (function_exists('get_magic_quotes_gpc') && get_magic_quotes_gpc() == 1) {
@@ -60,7 +65,11 @@ error_reporting(E_ALL & ~E_STRICT);
 date_default_timezone_set(@date_default_timezone_get());
 
 ini_set('display_errors', 1);
-header('Content-Type: text/html; charset=UTF-8');
+
+if (!isCommandLineInterface()) {
+	header('Content-Type: text/html; charset=UTF-8');
+}
+
 define('TIMESTAMP',	time());
 	
 require 'includes/constants.php' ;
@@ -69,6 +78,7 @@ ini_set('log_errors', 'On');
 ini_set('error_log', 'includes/error.log');
 
 require 'includes/GeneralFunctions.php';
+
 set_exception_handler('exceptionHandler');
 set_error_handler('errorHandler');
 
@@ -226,4 +236,10 @@ elseif(MODE === 'CHAT')
 	{
 		HTTP::redirectTo('index.php?code=3');
 	}
+}
+elseif(MODE === 'CLI-CRON')
+{
+	require 'includes/vars.php';
+	require 'includes/classes/class.BuildFunctions.php';
+	require 'includes/classes/class.PlanetRessUpdate.php';
 }
