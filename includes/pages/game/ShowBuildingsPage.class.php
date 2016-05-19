@@ -88,7 +88,11 @@ class ShowBuildingsPage extends AbstractGamePage
         }
 
         if(empty($CurrentQueue[$QueueID - 2][3])) {
-            throw new Exception("Issue #138 triggered: \n\n".var_dump($ActualCount, $QueueID, $PLANET['b_building_id'], $CurrentQueue));
+            ob_start();
+            var_dump($ActualCount, $QueueID, $PLANET['b_building_id'], $CurrentQueue);
+            $content = ob_get_contents();
+            ob_end_clean();
+            throw new Exception("Issue #138 triggered: \n\n".$content);
         }
 
 		$Element		= $CurrentQueue[$QueueID - 2][0];
